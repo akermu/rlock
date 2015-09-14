@@ -1,18 +1,56 @@
 extern crate libc;
 extern crate x11;
 
-use std::ptr::{
-    null,
-    null_mut,
-};
-use std::mem::{
-    zeroed,
-    size_of_val,
-};
-// use std::ffi::CString;
+use std::ptr::{null, null_mut};
+use std::mem::{zeroed, size_of_val};
 
 use x11::xlib;
 use x11::keysym;
+
+use libc::{ c_char, c_long, c_ulong};
+use std::ffi::CString;
+use std::ffi::CStr;
+
+use std::str;
+
+#[repr(C)]
+#[derive(Debug,Copy)]
+struct Spwd {
+    name: *mut c_char,
+    password: *mut c_char,
+    sp_lstchg: c_long,
+    sp_min: c_long,
+    sp_max: c_long,
+    sp_warn: c_long,
+    sp_inact: c_long,
+    sp_expire: c_long,
+    sp_flag: c_ulong,
+}
+
+impl Spwd {
+    pub fn get_password(&self) -> String {
+        let slice = unsafe { CStr::from_ptr(self.password).to_bytes() };
+        str::from_utf8(slice).unwrap().to_string()
+    }
+}
+
+impl ::std::clone::Clone for Spwd {
+    fn clone(&self) -> Self { *self }
+}
+impl ::std::default::Default for Spwd {
+    fn default() -> Self { unsafe { ::std::mem::zeroed() } }
+}
+
+extern "C" {
+    fn getspnam(name: *const c_char) -> *mut Spwd;
+}
+
+
+#[link(name = "crypt")]
+extern {
+    fn crypt(key: *const c_char, salt: *const c_char) -> *mut c_char;
+}
+
 
 fn main() {
     unsafe {
@@ -53,7 +91,6 @@ fn main() {
                                           &mut attributes);
 
 
-        println!("Window: {}", window);
         xlib::XMapRaised(display, window);
 
         // Grab Keyboard
@@ -93,7 +130,20 @@ fn main() {
             }
         }
 
-        println!("{}", password);
+        println!("{:?}", password);
+
+        let salt = CString::new("cNQPX.Vl").unwrap();
+        let bla = CString::new("testpassword").unwrap();
+        let pass = crypt(bla.as_ptr(), salt.as_ptr());
+        let slice = unsafe { CStr::from_ptr(pass).to_bytes() };
+        println!("{}", str::from_utf8(slice).unwrap().to_string());
+        println!("Hallo");
+        
+        let shadow = getspnam(CString::new("lukas").unwrap().as_ptr());
+        if shadow != null_mut() {
+            println!("{:?}", (*shadow).get_password());
+        }
+
         xlib::XDestroyWindow(display, window);
         xlib::XCloseDisplay(display);
     }
