@@ -1,0 +1,12 @@
+[package]
+name = "rlock"
+version = "0.1.0"
+authors = ["Lukas Fürmetz <fuermetz@mailbox.org>"]
+
+[dependencies]
+libc = "0.1.10"
+
+[dependencies.x11]
+version = "2.1.0"
+features = ["xlib"]
+
