@@ -1,18 +1,15 @@
 extern crate libc;
 extern crate x11;
-
+use libc::c_char;
 use std::env;
 use std::ptr::{null, null_mut};
-use std::mem::{zeroed, size_of_val};
-use x11::xlib::{
-    Display,
-    Window
-};
+use std::mem::zeroed;
+use x11::xlib::Display;
 use x11::xlib;
 use x11::keysym;
-use libc::c_char;
 
 mod auth;
+mod window;
 
 
 fn main() {
@@ -26,14 +23,13 @@ fn main() {
         None => panic!("Usage: rlock <username>"),
         Some(user) => user,
     };
-    // let user = args.nth(1).unwrap();
 
     let display = unsafe { xlib::XOpenDisplay(null()) };
     if display == null_mut() {
         panic!("Can't open X11-Display.")
     }
 
-    let window = lockscreen(display);
+    let window = window::lockscreen(display);
 
     // Grab Keyboard
     grab_keyboard(display);
@@ -105,37 +101,6 @@ fn grab_keyboard(display: *mut xlib::Display) -> bool {
         }
     }
     false
-}
-
-fn lockscreen(display: *mut xlib::Display) -> xlib::Window {
-    unsafe {
-        let screen = xlib::XDefaultScreen(display);
-        let root = xlib::XRootWindow(display, screen);
-        let visual = xlib::XDefaultVisual(display, screen);
-        let depth = xlib::XDefaultDepth(display, screen);
-
-        let black_pixel = xlib::XBlackPixel(display, screen);
-
-        let width = xlib::XDisplayWidth(display, screen) as u32;
-        let height = xlib::XDisplayHeight(display, screen) as u32;
-
-        let mut attributes: xlib::XSetWindowAttributes = zeroed();
-        attributes.background_pixel = black_pixel;
-        attributes.override_redirect = xlib::True;
-        attributes.event_mask = xlib::ExposureMask | xlib::KeyPressMask | xlib::VisibilityChangeMask;
-
-        let window = xlib::XCreateWindow(display, root, 0, 0, width,
-                                         height, 0, depth,
-                                         xlib::CopyFromParent as u32,
-                                         visual,
-                                         xlib::CWOverrideRedirect |
-                                         xlib::CWBackPixel |
-                                         xlib::CWEventMask,
-                                         &mut attributes);
-
-        xlib::XMapRaised(display, window);
-        window
-    }
 }
 
 fn isprint(c: c_char) -> bool { unsafe { libc::isprint(c as i32) != 0 }}
