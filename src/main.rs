@@ -29,7 +29,8 @@ fn main() {
         panic!("Can't open X11-Display.")
     }
 
-    let window = window::lockscreen(display);
+    let ls = window::Lockscreen::new(display);
+    ls.show(display);
 
     // Grab Keyboard
     grab_keyboard(display);
@@ -80,7 +81,6 @@ fn main() {
     }
 
     unsafe {
-        xlib::XDestroyWindow(display, window);
         xlib::XCloseDisplay(display);
     }
 }
