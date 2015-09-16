@@ -65,6 +65,12 @@ fn main() {
                             password = "".to_string();
                         }
                     },
+                    keysym::XK_BackSpace => {
+                        if !password.is_empty() {
+                            let new_len = password.len() - 1;
+                            password.truncate(new_len);
+                        }
+                    },
                     _ => {
                         if isprint(input_char) {
                             let character = (input_char as u8) as char;
