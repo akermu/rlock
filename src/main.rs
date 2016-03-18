@@ -1,10 +1,11 @@
 extern crate libc;
 extern crate x11;
+extern crate xft_sys;
+
 use libc::c_char;
 use std::env;
 use std::ptr::{null, null_mut};
 use std::mem::zeroed;
-use x11::xlib::Display;
 use x11::xlib;
 use x11::keysym;
 
@@ -29,8 +30,8 @@ fn main() {
         panic!("Can't open X11-Display.")
     }
 
-    let ls = window::Lockscreen::new(display);
-    ls.show(display);
+    let ls = window::Lockscreen::new(display, &user);
+    ls.show();
 
     // Grab Keyboard
     grab_keyboard(display);
@@ -39,8 +40,14 @@ fn main() {
 
     // Main loop
     let mut event: xlib::XEvent = unsafe { zeroed() };
+    ls.write_screen();
     loop {
-        unsafe { xlib::XNextEvent(display, &mut event); }
+        unsafe {
+            let ret = xlib::XNextEvent(display, &mut event);
+            if ret != 0 {
+                break;
+            }
+        };
         match event.get_type() {
             xlib::KeyPress => {
                 let mut input_char : libc::c_char = 0;
@@ -60,28 +67,27 @@ fn main() {
                             break;
                         } else {
                             password = "".to_string();
+                            ls.set_password_len(0);
                         }
                     },
                     keysym::XK_BackSpace => {
                         if !password.is_empty() {
                             let new_len = password.len() - 1;
                             password.truncate(new_len);
+                            ls.set_password_len(new_len);
                         }
                     },
                     _ => {
                         if isprint(input_char) {
                             let character = (input_char as u8) as char;
                             password = password + &character.to_string();
+                            ls.set_password_len(password.len());
                         }
                     },
                 }
             }
             _ => {}
-        }
-    }
-
-    unsafe {
-        xlib::XCloseDisplay(display);
+        };
     }
 }
 
