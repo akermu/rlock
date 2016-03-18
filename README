@@ -1,0 +1,4 @@
+* This is a Linux screen locker written in rust
+
+  Currently the implementation is working, but the whole program is
+  very simplistic. So basically this is pre-alpha!
