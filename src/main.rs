@@ -16,7 +16,7 @@ mod window;
 fn main() {
     let euid = unsafe { libc::geteuid() };
     if euid != 0 {
-        panic!("{}", "Must be run as root!");
+        panic!("{}", "Must be run as setuid root binary!");
     }
 
     let args = env::args().nth(1);
