@@ -1,10 +1,8 @@
-extern crate xft_sys;
-
 use std::mem::zeroed;
 use std::ffi::CString;
 use std::iter::repeat;
 use x11::xlib;
-use xft_sys as xft;
+use x11::xft;
 
 
 /// Window struct
@@ -80,7 +78,7 @@ impl<'a> Lockscreen<'a> {
             }
         }
     }
-    
+
     pub fn show(&self) -> () {
         unsafe {
             xlib::XMapRaised(self.display, self.window);

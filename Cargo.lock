@@ -4,51 +4,12 @@ version = "0.0.1"
 dependencies = [
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "x11 2.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "xft_sys 0.0.1",
 ]
-
-[[package]]
-name = "fontconfig_sys"
-version = "0.0.1"
-dependencies = [
- "libc 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "freetype-sys"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "libc 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "libz-sys 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
- "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "gcc"
-version = "0.3.35"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "libc"
-version = "0.1.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "libc"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "libz-sys"
-version = "0.1.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "gcc 0.3.35 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
-]
 
 [[package]]
 name = "pkg-config"
@@ -62,16 +23,5 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "xft_sys"
-version = "0.0.1"
-dependencies = [
- "fontconfig_sys 0.0.1",
- "freetype-sys 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "x11 2.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

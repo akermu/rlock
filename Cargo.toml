@@ -10,8 +10,4 @@ libc = "0.2.15"
 
 [dependencies.x11]
 version = "2.8.0"
-features = ["xlib"]
-
-[dependencies.xft_sys]
-path = "xft_sys"
-version = "0.0.1"
+features = ["xlib", "xft"]

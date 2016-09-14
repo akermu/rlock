@@ -1,6 +1,5 @@
 extern crate libc;
 extern crate x11;
-extern crate xft_sys;
 
 use libc::c_char;
 use std::env;
