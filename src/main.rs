@@ -25,6 +25,15 @@ fn main() {
         Some(user) => user,
     };
 
+    let hashed_password = auth::get_hashed_password(&user);
+
+    // Drop privileges
+    unsafe {
+        libc::setgroups(0, null());
+        libc::setgid(libc::getgid());
+        libc::setuid(libc::getuid());
+    }
+
     let display = unsafe { xlib::XOpenDisplay(null()) };
     if display == null_mut() {
         panic!("Can't open X11-Display.")
@@ -62,7 +71,7 @@ fn main() {
 
                 match ksym as u32 {
                     keysym::XK_Return  => {
-                        let auth = auth::auth_user(&user, &password);
+                        let auth = auth::validate(&password, &hashed_password);
                         if auth {
                             break;
                         } else {

@@ -42,18 +42,19 @@ extern "C" {
     fn crypt(key: *const c_char, salt: *const c_char) -> *mut c_char;
 }
 
-pub fn auth_user(user: &str, password: &str) -> bool {
-
-    let entry = unsafe {
+pub fn get_hashed_password(user: &str) -> &str {
+    unsafe {
         let shadow = getspnam(CString::new(user).unwrap().as_ptr());
         if shadow != null_mut()  {
             (*shadow).get_password()
         } else {
             panic!("Can't get password from /etc/shadow for user {}.", user);
         }
-    };
+    }
+}
 
-    let parts: Vec<&str> = entry.split('$').collect();
+pub fn validate(password: &str, hashed_password: &str) -> bool {
+    let parts: Vec<&str> = hashed_password.split('$').collect();
     let salt = format!("${}${}$", parts[1], parts[2]);
 
     let enc_pass = unsafe {
@@ -63,6 +64,6 @@ pub fn auth_user(user: &str, password: &str) -> bool {
         //TODO: Zero out password
         str::from_utf8(CStr::from_ptr(pass).to_bytes()).unwrap()
     };
-    
-    enc_pass == entry
+
+    enc_pass == hashed_password
 }
