@@ -14,14 +14,14 @@ mod window;
 
 
 fn main() {
-    let euid = unsafe { libc::funcs::posix88::unistd::geteuid() };
+    let euid = unsafe { libc::geteuid() };
     if euid != 0 {
         panic!("{}", "Must be run as root!");
     }
-    
+
     let args = env::args().nth(1);
     let user = match args {
-        None => panic!("Usage: rlock <username>"),
+        None => env::var("USER").unwrap(),
         Some(user) => user,
     };
 
