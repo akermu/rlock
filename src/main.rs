@@ -117,4 +117,6 @@ fn grab_keyboard(display: *mut xlib::Display) -> bool {
     false
 }
 
-fn isprint(c: c_char) -> bool { unsafe { libc::isprint(c as i32) != 0 }}
+fn isprint(c: c_char) -> bool {
+    unsafe { libc::isprint(c as i32) != 0 }
+}
