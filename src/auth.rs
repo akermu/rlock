@@ -1,7 +1,7 @@
 use libc::{ c_char, c_long, c_ulong};
 use std::ffi::CStr;
 use std::ffi::CString;
-use std::ptr::null_mut;
+use std::ptr::{null_mut, write_volatile};
 use std::str;
 
 #[repr(C)]
@@ -53,17 +53,23 @@ pub fn get_hashed_password(user: &str) -> &str {
     }
 }
 
-pub fn validate(password: &str, hashed_password: &str) -> bool {
-    let parts: Vec<&str> = hashed_password.split('$').collect();
+pub fn validate(password: &str, hash: &str) -> bool {
+    let parts: Vec<&str> = hash.split('$').collect();
     let salt = format!("${}${}$", parts[1], parts[2]);
 
-    let enc_pass = unsafe {
+    let hashed_password = unsafe {
         let salt = CString::new(salt).unwrap();
         let password = CString::new(password).unwrap();
         let pass = crypt(password.as_ptr(), salt.as_ptr());
-        //TODO: Zero out password
         str::from_utf8(CStr::from_ptr(pass).to_bytes()).unwrap()
     };
 
-    enc_pass == hashed_password
+    hashed_password == hash
+}
+
+pub fn secure_zeroed(password: &str) {
+    let dst = password.as_ptr() as *mut u8;
+    unsafe {
+        write_volatile::<u8>(dst, 0);
+    }
 }

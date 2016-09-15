@@ -71,6 +71,7 @@ fn main() {
                 match ksym as u32 {
                     keysym::XK_Return  => {
                         let auth = auth::validate(&password, &hashed_password);
+                        auth::secure_zeroed(&password);
                         if auth {
                             break;
                         } else {
